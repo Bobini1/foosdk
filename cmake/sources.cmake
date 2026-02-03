@@ -56,7 +56,7 @@ target_include_directories(pfc PUBLIC
 )
 target_compile_definitions(pfc PUBLIC ${FLAGS})
 if (APPLE)
-    target_link_libraries(pfc PUBLIC "-framework Foundation")
+    target_link_libraries(pfc PUBLIC "$<LINK_LIBRARY:FRAMEWORK,Foundation>")
 endif ()
 
 _foosdk_glob(SDK_SOURCES
@@ -149,6 +149,7 @@ if (APPLE)
             "${_foosdk_glob_root}/foobar2000/shared/utf8.cpp"
     )
     list(APPEND SHARED_SOURCES ${SHARED_SOURCES_MACOS})
+    target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
 elseif (WIN32)
     list(REMOVE_ITEM SHARED_SOURCES "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp")
 endif ()
@@ -169,7 +170,6 @@ elseif (APPLE)
             "${_foosdk_glob_root}/foobar2000/foo_sample/*.mm"
             "${_foosdk_glob_root}/foobar2000/foo_sample/*.xib")
     list(APPEND SAMPLE_SOURCES ${SAMPLE_SOURCES_MACOS})
-    list(APPEND SHARED_SOURCES ${SHARED_SOURCES_MACOS})
 endif ()
 target_include_directories(foosdk_shared PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
@@ -183,7 +183,7 @@ target_include_directories(foo_sample PUBLIC
 target_link_libraries(foo_sample PRIVATE foosdk foosdk_helpers foosdk_shared foosdk_component_client)
 if (APPLE)
     set_target_properties(foo_sample PROPERTIES BUNDLE ON BUNDLE_EXTENSION component)
-    target_link_libraries(foo_sample PRIVATE "-framework Cocoa")
+    target_link_libraries(foo_sample PRIVATE "$<LINK_LIBRARY:FRAMEWORK,Cocoa>")
     target_link_libraries(foo_sample PRIVATE foosdk_helpers_mac)
 elseif (WIN32)
     target_link_libraries(foo_sample PRIVATE foosdk_ppui)
