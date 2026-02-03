@@ -92,6 +92,13 @@ _foosdk_glob(SDK_HELPERS_SOURCES
         "${_foosdk_glob_root}/foobar2000/helpers/*.c"
         "${_foosdk_glob_root}/foobar2000/helpers/*.cpp"
 )
+if (APPLE)
+    list(REMOVE_ITEM SDK_HELPERS_SOURCES
+            "${_foosdk_glob_root}/foobar2000/helpers/inplace_edit.cpp"
+            "${_foosdk_glob_root}/foobar2000/helpers/WindowPositionUtils.cpp"
+            "${_foosdk_glob_root}/foobar2000/helpers/CTableEditHelper-Legacy.cpp"
+    )
+endif ()
 add_library(foosdk_helpers STATIC ${SDK_HELPERS_SOURCES})
 target_include_directories(foosdk_helpers PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers>"
