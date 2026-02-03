@@ -101,16 +101,18 @@ if (APPLE)
     target_link_libraries(foosdk_helpers_mac PUBLIC foosdk_helpers)
 endif ()
 
-_foosdk_glob(PPUI_SOURCES
-        "${_foosdk_glob_root}/libPPUI/*.c"
-        "${_foosdk_glob_root}/libPPUI/*.cpp"
-)
-add_library(foosdk_ppui STATIC ${PPUI_SOURCES})
-target_include_directories(foosdk_ppui PUBLIC
-        "$<BUILD_INTERFACE:${_foosdk_glob_root}/libPPUI>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libPPUI>"
-)
-target_link_libraries(foosdk_ppui PUBLIC pfc wtl)
+if (WIN32)
+    _foosdk_glob(PPUI_SOURCES
+            "${_foosdk_glob_root}/libPPUI/*.c"
+            "${_foosdk_glob_root}/libPPUI/*.cpp"
+    )
+    add_library(foosdk_ppui STATIC ${PPUI_SOURCES})
+    target_include_directories(foosdk_ppui PUBLIC
+            "$<BUILD_INTERFACE:${_foosdk_glob_root}/libPPUI>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libPPUI>"
+    )
+    target_link_libraries(foosdk_ppui PUBLIC pfc wtl)
+endif ()
 
 _foosdk_glob(COMPONENT_CLIENT_SOURCES
         "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.c"
