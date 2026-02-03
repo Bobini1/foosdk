@@ -146,38 +146,45 @@ if (WIN32)
     target_link_libraries(foosdk_ppui PUBLIC pfc wtl)
 endif ()
 
-_foosdk_glob(SHARED_SOURCES
-        "${_foosdk_glob_root}/foobar2000/shared/*.c"
-        "${_foosdk_glob_root}/foobar2000/shared/*.cpp"
+file(GLOB SHARED_SOURCES CONFIGURE_DEPENDS LIST_DIRECTORIES FALSE RELATIVE "${_foosdk_glob_root}"
+        "${_foosdk_glob_root}/foobar2000/helpers-mac/*.m"
+        "${_foosdk_glob_root}/foobar2000/helpers-mac/*.mm"
 )
+list(SORT SHARED_SOURCES)
 if (APPLE)
-    _foosdk_glob(SHARED_SOURCES_MACOS
-            "${_foosdk_glob_root}/foobar2000/shared/*.m"
-            "${_foosdk_glob_root}/foobar2000/shared/*.mm"
-    )
     # There is so few of them that it's easier to just list them explicitly
     set(SHARED_SOURCES
-            "${_foosdk_glob_root}/foobar2000/shared/audio_math.cpp"
-            "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp"
-            "${_foosdk_glob_root}/foobar2000/shared/stdafx.cpp"
-            "${_foosdk_glob_root}/foobar2000/shared/utf8.cpp"
+            "foobar2000/shared/audio_math.cpp"
+            "foobar2000/shared/shared-nix.cpp"
+            "foobar2000/shared/stdafx.cpp"
+            "foobar2000/shared/utf8.cpp"
     )
-    list(APPEND SHARED_SOURCES ${SHARED_SOURCES_MACOS})
 elseif (WIN32)
-    list(REMOVE_ITEM SHARED_SOURCES "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp")
+    list(REMOVE_ITEM SHARED_SOURCES "foobar2000/shared/shared-nix.cpp")
 endif ()
-add_library(foosdk_shared SHARED ${SHARED_SOURCES})
-target_compile_definitions(foosdk_shared PRIVATE SHARED_EXPORTS)
-target_link_libraries(foosdk_shared PUBLIC foosdk)
-target_link_libraries(foosdk_shared PRIVATE pfc)
+set(SHARED_SOURCES_UNPREFIXED ${SHARED_SOURCES})
+list(TRANSFORM SHARED_SOURCES PREPEND "${_foosdk_glob_root}/")
+add_library(foosdk_shared INTERFACE)
+target_compile_definitions(foosdk_shared INTERFACE SHARED_EXPORTS)
+target_link_libraries(foosdk_shared INTERFACE foosdk)
 if (WIN32)
-    target_link_libraries(foosdk_shared PRIVATE DbgHelp Comctl32 UxTheme)
+    target_link_libraries(foosdk_shared INTERFACE DbgHelp Comctl32 UxTheme)
 elseif (APPLE)
-    target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
+    target_link_libraries(foosdk_shared INTERFACE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
 endif ()
-target_include_directories(foosdk_shared PUBLIC
+target_include_directories(foosdk_shared INTERFACE
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
+)
+target_sources(foosdk_shared INTERFACE
+        "$<BUILD_INTERFACE:${SHARED_SOURCES}>"
+        "$<INSTALL_INTERFACE:${SHARED_SOURCES_UNPREFIXED}>"
+)
+set(SHARED_SOURCES_UNPREFIXED ${SHARED_SOURCES})
+list(TRANSFORM SHARED_SOURCES PREPEND "${_foosdk_glob_root}/")
+target_sources(foosdk_shared INTERFACE
+        "$<BUILD_INTERFACE:${SHARED_SOURCES}>"
+        "$<INSTALL_INTERFACE:${SHARED_SOURCES_UNPREFIXED}>"
 )
 _foosdk_glob(SAMPLE_SOURCES
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
