@@ -97,6 +97,7 @@ if (APPLE)
             "${_foosdk_glob_root}/foobar2000/helpers/inplace_edit.cpp"
             "${_foosdk_glob_root}/foobar2000/helpers/WindowPositionUtils.cpp"
             "${_foosdk_glob_root}/foobar2000/helpers/CTableEditHelper-Legacy.cpp"
+            "${_foosdk_glob_root}/foobar2000/helpers/ui_element_helpers.cpp"
     )
 endif ()
 add_library(foosdk_helpers STATIC ${SDK_HELPERS_SOURCES})
