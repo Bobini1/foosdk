@@ -114,17 +114,23 @@ if (WIN32)
 endif ()
 
 if (APPLE)
-    _foosdk_glob(SDK_HELPERS_MAC_SOURCES
+    file(GLOB SDK_HELPERS_MAC_SOURCES CONFIGURE_DEPENDS LIST_DIRECTORIES FALSE RELATIVE "${_foosdk_glob_root}"
             "${_foosdk_glob_root}/foobar2000/helpers-mac/*.m"
             "${_foosdk_glob_root}/foobar2000/helpers-mac/*.mm"
     )
+    list(SORT SDK_HELPERS_MAC_SOURCES)
+    set(SDK_HELPERS_MAC_SOURCES_UNPREFIXED ${SDK_HELPERS_MAC_SOURCES})
+    list(TRANSFORM SDK_HELPERS_MAC_SOURCES PREPEND "${_foosdk_glob_root}/")
     add_library(foosdk_helpers_mac INTERFACE)
     target_include_directories(foosdk_helpers_mac INTERFACE
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers-mac>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac>"
     )
     target_link_libraries(foosdk_helpers_mac INTERFACE foosdk_helpers)
-    target_sources(foosdk_helpers_mac INTERFACE ${SDK_HELPERS_MAC_SOURCES})
+    target_sources(foosdk_helpers_mac INTERFACE
+            "$<BUILD_INTERFACE:${SDK_HELPERS_MAC_SOURCES}>"
+            "$<INSTALL_INTERFACE:${SDK_HELPERS_MAC_SOURCES_UNPREFIXED}>"
+    )
 endif ()
 
 if (WIN32)
