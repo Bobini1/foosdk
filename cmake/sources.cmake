@@ -119,7 +119,7 @@ if (APPLE)
             "${_foosdk_glob_root}/foobar2000/helpers-mac/*.mm"
     )
     add_library(foosdk_helpers_mac INTERFACE)
-    target_include_directories(foosdk_helpers_mac PUBLIC
+    target_include_directories(foosdk_helpers_mac INTERFACE
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers-mac>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac>"
     )
