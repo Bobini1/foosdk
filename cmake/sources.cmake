@@ -59,6 +59,17 @@ if (APPLE)
     target_link_libraries(pfc PUBLIC "$<LINK_LIBRARY:FRAMEWORK,Foundation>")
 endif ()
 
+_foosdk_glob(COMPONENT_CLIENT_SOURCES
+        "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.c"
+        "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.cpp"
+)
+add_library(foosdk_component_client STATIC ${COMPONENT_CLIENT_SOURCES})
+target_include_directories(foosdk_component_client PUBLIC
+        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
+)
+target_link_libraries(foosdk_component_client PUBLIC pfc)
+
 _foosdk_glob(SDK_SOURCES
         "${_foosdk_glob_root}/foobar2000/SDK/*.c"
         "${_foosdk_glob_root}/foobar2000/SDK/*.cpp"
@@ -75,7 +86,7 @@ target_include_directories(foosdk PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
 )
-target_link_libraries(foosdk PUBLIC pfc)
+target_link_libraries(foosdk PUBLIC pfc foosdk_component_client)
 
 _foosdk_glob(SDK_HELPERS_SOURCES
         "${_foosdk_glob_root}/foobar2000/helpers/*.c"
@@ -117,17 +128,6 @@ if (WIN32)
     target_link_libraries(foosdk_ppui PUBLIC pfc wtl)
 endif ()
 
-_foosdk_glob(COMPONENT_CLIENT_SOURCES
-        "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.c"
-        "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.cpp"
-)
-add_library(foosdk_component_client STATIC ${COMPONENT_CLIENT_SOURCES})
-target_include_directories(foosdk_component_client PUBLIC
-        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
-)
-target_link_libraries(foosdk_component_client PUBLIC pfc)
-
 _foosdk_glob(SAMPLE_SOURCES
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.cpp"
@@ -159,7 +159,7 @@ if (WIN32)
     target_link_libraries(foosdk_shared PRIVATE DbgHelp Comctl32 UxTheme)
 elseif (APPLE)
     target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
-    target_link_libraries(foosdk_shared PRIVATE foosdk foosdk_component_client)
+    target_link_libraries(foosdk_shared PRIVATE foosdk)
 endif ()
 if (WIN32)
     _foosdk_glob(SAMPLE_SOURCES_WINDOWS
@@ -182,7 +182,7 @@ target_include_directories(foo_sample PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/foo_sample>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/foo_sample>"
 )
-target_link_libraries(foo_sample PRIVATE foosdk foosdk_helpers foosdk_shared foosdk_component_client)
+target_link_libraries(foo_sample PRIVATE foosdk foosdk_helpers foosdk_shared)
 if (APPLE)
     set_target_properties(foo_sample PROPERTIES BUNDLE ON BUNDLE_EXTENSION component)
     target_link_libraries(foo_sample PRIVATE "$<LINK_LIBRARY:FRAMEWORK,Cocoa>")
