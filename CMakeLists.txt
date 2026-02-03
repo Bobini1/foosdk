@@ -1,154 +1,72 @@
 cmake_minimum_required(VERSION 3.24)
-
-project(foosdk)
-
+project(foosdk LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-set(OS_WINDOWS OFF)
-set(OS_MAC OFF)
-
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-    set(OS_WINDOWS ON)
-    include(SourcesWindows)
-elseif(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-    set(OS_MAC ON)
-    include(SourcesMacOs)
+include(FetchContent)
+FetchContent_Declare(
+        foobar_sdk
+        URL https://www.foobar2000.org/downloads/SDK-2024-12-03.7z
+        URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
+)
+FetchContent_MakeAvailable(foobar_sdk)
+FetchContent_Declare(
+        wtl
+        URL https://sourceforge.net/projects/wtl/files/latest/download
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(wtl)
+add_library(wtl INTERFACE)
+target_include_directories(wtl INTERFACE
+        "$<BUILD_INTERFACE:${wtl_SOURCE_DIR}/Include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/wtl>"
+)
+set(FOOSDK_ROOT "${foobar_sdk_SOURCE_DIR}")
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     enable_language(OBJCXX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG=1")
     set(CMAKE_OBJCXX_FLAGS_DEBUG "${CMAKE_OBJCXX_FLAGS_DEBUG} -DDEBUG=1")
-else()
+elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     message(FATAL_ERROR "Target OS is not Windows or Mac")
-endif()
-
-option(FOO_SAMPLE       "Build foo_sample component" OFF)
-option(FOO_SDK_HELPERS  "Include SDK helpers (requires FOO_PPUI on Windows)" ON)
-
-if(OS_WINDOWS)
-    option(FOO_PPUI         "Include libPPUI (adds usage of ATL/WTL)" ON)
-    option(FOO_SYSTEM_WTL   "Use system WTL library" OFF)
-else()
-    set(FOO_PPUI OFF)
-endif()
-
-if(MSVC)
+endif ()
+include(GNUInstallDirs)
+include(Sources)
+if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /wd4302 /wd4838 /wd4996 /d2notypeopt")
-endif()
+endif ()
 
-set(INCLUDE_WTL OFF) # WTL not WTF
-
-if(OS_WINDOWS)
-    set(WINVER 0x0601)
-
-    add_definitions(
-        -D_UNICODE -DUNICODE -DSTRICT -DWINVER=${WINVER} -D_WIN32_WINNT=${WINVER}
-    )
-
-    if(FOO_PPUI)
-        if(FOO_SYSTEM_WTL)
-            find_package(Wtl REQUIRED)
-            include_directories(${WTL_INCLUDE_DIRS})
-        else()
-            include_directories(wtl/Include)
-            set(INCLUDE_WTL ON)
-        endif()
-    endif()
-endif()
-
-function(option_dependency_check OPT1 OPT2)
-    if(${OPT1})
-        if(NOT ${OPT2})
-            message(SEND_ERROR "Option ${OPT1} requires option ${OPT2}")
-        endif()
+function(_foosdk_install target)
+    if(TARGET ${target})
+        install(
+                TARGETS ${target}
+                EXPORT foosdkTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        )
     endif()
 endfunction()
 
-if(OS_WINDOWS)
-    option_dependency_check(FOO_SDK_HELPERS FOO_PPUI)
-endif()
+foreach(tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared wtl)
+    _foosdk_install(${tgt})
+endforeach()
 
-option_dependency_check(FOO_SAMPLE FOO_SDK_HELPERS)
-
-set(SHARED_LIBRARY "")
-
-if(OS_WINDOWS)
-    if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-        set(SHARED_LIBRARY sdk/foobar2000/shared/shared-x64.lib)
-    else()
-        set(SHARED_LIBRARY sdk/foobar2000/shared/shared-Win32.lib)
-    endif()
-endif()
-
-set(
-    LIB_SOURCES
-    ${PFC_SOURCES} ${PFC_HEADERS}
-    ${SHARED_SOURCES} ${SHARED_HEADERS}
-    ${SDK_SOURCES} ${SDK_HEADERS}
-    ${COMPONENT_CLIENT_SOURCES} ${COMPONENT_CLIENT_HEADERS}
+install(
+        TARGETS foo_sample LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(
+        EXPORT foosdkTargets NAMESPACE foosdk::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/foosdk
+)
+install(DIRECTORY
+        "${foobar_sdk_SOURCE_DIR}/pfc"
+        "${foobar_sdk_SOURCE_DIR}/foobar2000"
+        "${foobar_sdk_SOURCE_DIR}/libPPUI"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
 
-if(INCLUDE_WTL)
-    set(LIB_SOURCES ${LIB_SOURCES} ${WTL_HEADERS})
-endif()
-
-if(FOO_SDK_HELPERS)
-    set(LIB_SOURCES ${LIB_SOURCES} ${SDK_HELPERS_SOURCES} ${SDK_HELPERS_HEADERS})
-endif()
-
-if(FOO_PPUI)
-    set(LIB_SOURCES ${LIB_SOURCES} ${PPUI_SOURCES} ${PPUI_HEADERS})
-endif()
-
-include_directories(sdk)
-include_directories(sdk/foobar2000)
-
-add_library(foosdk STATIC ${LIB_SOURCES})
-
-if(FOO_SAMPLE)
-    add_library(foo_sample MODULE ${SAMPLE_SOURCES} ${SAMPLE_HEADERS})
-
-    target_include_directories(
-        foo_sample PRIVATE
-        sdk/foobar2000/foo_sample
-        sdk/foobar2000/helpers-mac
-    )
-
-    target_link_libraries(foo_sample foosdk)
-
-    if(SHARED_LIBRARY)
-        target_link_libraries(foo_sample "${CMAKE_CURRENT_SOURCE_DIR}/${SHARED_LIBRARY}")
-    endif()
-
-    if(OS_MAC)
-        set_target_properties(
-            foo_sample PROPERTIES
-            BUNDLE ON
-            BUNDLE_EXTENSION component
-        )
-
-        target_link_libraries(foo_sample "-framework Cocoa")
-    endif()
-endif()
-
-install(TARGETS foosdk ARCHIVE DESTINATION lib)
-
-if(SHARED_LIBRARY)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${SHARED_LIBRARY}" DESTINATION lib)
-endif()
-
-install(FILES ${SHARED_HEADERS} DESTINATION include/foobar2000/shared)
-install(FILES ${PFC_HEADERS} DESTINATION include/pfc)
-install(FILES ${SDK_HEADERS} DESTINATION include/foobar2000/SDK)
-
-if(INCLUDE_WTL)
-    install(FILES ${WTL_HEADERS} DESTINATION include)
-endif()
-
-if(FOO_SDK_HELPERS)
-    install(FILES ${SDK_HELPERS_HEADERS} DESTINATION include/foobar2000/helpers)
-endif()
-
-if(FOO_PPUI)
-    install(FILES ${PPUI_HEADERS} DESTINATION include/libPPUI)
-endif()
+install(DIRECTORY "${wtl_SOURCE_DIR}/Include/"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wtl
+)

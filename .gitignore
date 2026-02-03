@@ -1,6 +1,8 @@
 build*/*
+install*/*
 sdk/foobar2000/foo_input_validator/*
 wtl/AppWizard/*
 wtl/Samples/*
 
 *.user
+.idea/
