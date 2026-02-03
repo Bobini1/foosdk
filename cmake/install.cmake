@@ -1,6 +1,6 @@
 include(GNUInstallDirs)
 function(_foosdk_install target)
-    if(TARGET ${target})
+    if (TARGET ${target})
         install(
                 TARGETS ${target}
                 EXPORT foosdkTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -8,12 +8,28 @@ function(_foosdk_install target)
                 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
                 INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
-    endif()
+    endif ()
 endfunction()
 
-foreach(tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared wtl)
+foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui wtl)
     _foosdk_install(${tgt})
-endforeach()
+endforeach ()
+
+if (TARGET foosdk_shared)
+    if (WIN32)
+        install(IMPORTED_RUNTIME_ARTIFACTS foosdk_shared
+                DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    elseif (APPLE)
+        install(
+                TARGETS foosdk_shared
+                EXPORT foosdkTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        )
+    endif ()
+endif ()
 
 install(
         TARGETS foo_sample LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

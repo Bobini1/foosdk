@@ -166,19 +166,34 @@ if (APPLE)
 elseif (WIN32)
     list(REMOVE_ITEM SHARED_SOURCES "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp")
 endif ()
-add_library(foosdk_shared SHARED ${SHARED_SOURCES})
-target_compile_definitions(foosdk_shared PRIVATE SHARED_EXPORTS)
-target_link_libraries(foosdk_shared PUBLIC foosdk)
-target_link_libraries(foosdk_shared PRIVATE pfc)
-if (WIN32)
-    target_link_libraries(foosdk_shared PRIVATE DbgHelp Comctl32 UxTheme)
-elseif (APPLE)
-    target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
+if (APPLE)
+    add_library(foosdk_shared SHARED ${SHARED_SOURCES})
+    target_compile_definitions(foosdk_shared PRIVATE SHARED_EXPORTS)
+    target_link_libraries(foosdk_shared PRIVATE pfc)
+    target_link_libraries(foosdk_shared PUBLIC foosdk)
+    target_link_libraries(foosdk_shared PUBLIC "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
+    target_include_directories(foosdk_shared PUBLIC
+            "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
+    )
+elseif (WIN32)
+    add_library(foosdk_shared SHARED IMPORTED)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set_target_properties(foosdk_shared PROPERTIES
+                IMPORTED_IMPLIB "${_foosdk_glob_root}/foobar2000/shared/shared-x64.lib"
+        )
+    else ()
+        set_target_properties(foosdk_shared PROPERTIES
+                IMPORTED_IMPLIB "${_foosdk_glob_root}/foobar2000/shared/shared-Win32.lib"
+        )
+    endif ()
+    target_link_libraries(foosdk_shared INTERFACE foosdk)
+    target_link_libraries(foosdk_shared INTERFACE DbgHelp Comctl32 UxTheme)
+    target_include_directories(foosdk_shared INTERFACE
+            "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
+    )
 endif ()
-target_include_directories(foosdk_shared PUBLIC
-        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
-)
 _foosdk_glob(SAMPLE_SOURCES
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.cpp"
