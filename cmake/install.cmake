@@ -1,3 +1,4 @@
+include(GNUInstallDirs)
 function(_foosdk_install target)
     if(TARGET ${target})
         install(
