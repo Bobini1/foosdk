@@ -30,6 +30,14 @@ install(DIRECTORY
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
+install(DIRECTORY "${foobar_sdk_SOURCE_DIR}/foobar2000/SDK/"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/SDK
+        FILES_MATCHING PATTERN "*.cpp" PATTERN "*.mm" PATTERN "*.m"
+)
+install(DIRECTORY "${foobar_sdk_SOURCE_DIR}/foobar2000/foobar2000_component_client/"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/foobar2000_component_client
+        FILES_MATCHING PATTERN "*.cpp" PATTERN "*.mm" PATTERN "*.m"
+)
 
 install(DIRECTORY "${wtl_SOURCE_DIR}/Include/"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wtl
