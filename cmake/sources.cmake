@@ -47,6 +47,7 @@ if (APPLE)
             "${_foosdk_glob_root}/pfc/*.mm"
     )
     list(APPEND PFC_SOURCES ${PFC_SOURCES_MAC})
+    target_link_libraries(pfc PUBLIC "-framework Foundation")
 endif ()
 
 add_library(pfc STATIC ${PFC_SOURCES})
