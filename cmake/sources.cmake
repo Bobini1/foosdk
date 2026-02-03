@@ -177,21 +177,20 @@ if (APPLE)
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
     )
 elseif (WIN32)
-    add_library(foosdk_shared SHARED IMPORTED)
+    add_library(foosdk_shared INTERFACE)
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set_target_properties(foosdk_shared PROPERTIES
-                IMPORTED_IMPLIB "${_foosdk_glob_root}/foobar2000/shared/shared-x64.lib"
-        )
+        set(_foosdk_shared_implib "${_foosdk_glob_root}/foobar2000/shared/shared-x64.lib")
     else ()
-        set_target_properties(foosdk_shared PROPERTIES
-                IMPORTED_IMPLIB "${_foosdk_glob_root}/foobar2000/shared/shared-Win32.lib"
-        )
+        set(_foosdk_shared_implib "${_foosdk_glob_root}/foobar2000/shared/shared-Win32.lib")
     endif ()
+    target_link_libraries(foosdk_shared INTERFACE "${_foosdk_shared_implib}")
     target_include_directories(foosdk_shared INTERFACE
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
     )
+    unset(_foosdk_shared_implib)
 endif ()
+
 _foosdk_glob(SAMPLE_SOURCES
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
         "${_foosdk_glob_root}/foobar2000/foo_sample/*.cpp"

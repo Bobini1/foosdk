@@ -11,25 +11,9 @@ function(_foosdk_install target)
     endif ()
 endfunction()
 
-foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui wtl)
+foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared wtl)
     _foosdk_install(${tgt})
 endforeach ()
-
-if (TARGET foosdk_shared)
-    if (WIN32)
-        install(IMPORTED_RUNTIME_ARTIFACTS foosdk_shared
-                DESTINATION ${CMAKE_INSTALL_BINDIR}
-        )
-    elseif (APPLE)
-        install(
-                TARGETS foosdk_shared
-                EXPORT foosdkTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        )
-    endif ()
-endif ()
 
 install(
         TARGETS foo_sample LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -50,3 +34,11 @@ install(DIRECTORY
 install(DIRECTORY "${wtl_SOURCE_DIR}/Include/"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wtl
 )
+
+if (WIN32)
+    install(FILES
+            "${foobar_sdk_SOURCE_DIR}/foobar2000/shared/shared-x64.lib"
+            "${foobar_sdk_SOURCE_DIR}/foobar2000/shared/shared-Win32.lib"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+endif ()
