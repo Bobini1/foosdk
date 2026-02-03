@@ -118,12 +118,13 @@ if (APPLE)
             "${_foosdk_glob_root}/foobar2000/helpers-mac/*.m"
             "${_foosdk_glob_root}/foobar2000/helpers-mac/*.mm"
     )
-    add_library(foosdk_helpers_mac STATIC ${SDK_HELPERS_MAC_SOURCES})
+    add_library(foosdk_helpers_mac INTERFACE)
     target_include_directories(foosdk_helpers_mac PUBLIC
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers-mac>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac>"
     )
     target_link_libraries(foosdk_helpers_mac PUBLIC foosdk_helpers)
+    target_sources(foosdk_helpers_mac INTERFACE ${SDK_HELPERS_MAC_SOURCES})
 endif ()
 
 if (WIN32)
