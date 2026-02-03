@@ -1,6 +1,22 @@
-if (NOT DEFINED foobar_sdk_SOURCE_DIR)
-    message(FATAL_ERROR "foobar_sdk_SOURCE_DIR is not defined; FetchContent must be configured before including SourcesWindows.cmake")
-endif ()
+include(FetchContent)
+FetchContent_Declare(
+        foobar_sdk
+        URL https://www.foobar2000.org/downloads/SDK-2024-12-03.7z
+        URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
+)
+FetchContent_MakeAvailable(foobar_sdk)
+FetchContent_Declare(
+        wtl
+        URL https://sourceforge.net/projects/wtl/files/latest/download
+        OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(wtl)
+add_library(wtl INTERFACE)
+target_include_directories(wtl INTERFACE
+        "$<BUILD_INTERFACE:${wtl_SOURCE_DIR}/Include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/wtl>"
+)
+
 set(FLAGS)
 if (WIN32)
     set(WINVER 0x0601 CACHE STRING "Target Windows version")
@@ -82,6 +98,7 @@ if (APPLE)
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers-mac>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac>"
     )
+    target_link_libraries(foosdk_helpers_mac PUBLIC foosdk_helpers)
 endif ()
 
 _foosdk_glob(PPUI_SOURCES
@@ -155,6 +172,7 @@ target_link_libraries(foo_sample PRIVATE foosdk foosdk_helpers foosdk_shared foo
 if (APPLE)
     set_target_properties(foo_sample PROPERTIES BUNDLE ON BUNDLE_EXTENSION component)
     target_link_libraries(foo_sample PRIVATE "-framework Cocoa")
+    target_link_libraries(foo_sample PRIVATE foosdk_helpers_mac)
 elseif (WIN32)
     target_link_libraries(foo_sample PRIVATE foosdk_ppui)
 endif ()
