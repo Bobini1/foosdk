@@ -187,8 +187,6 @@ elseif (WIN32)
                 IMPORTED_IMPLIB "${_foosdk_glob_root}/foobar2000/shared/shared-Win32.lib"
         )
     endif ()
-    target_link_libraries(foosdk_shared INTERFACE foosdk)
-    target_link_libraries(foosdk_shared INTERFACE DbgHelp Comctl32 UxTheme)
     target_include_directories(foosdk_shared INTERFACE
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
