@@ -146,10 +146,6 @@ if (WIN32)
     target_link_libraries(foosdk_ppui PUBLIC pfc wtl)
 endif ()
 
-_foosdk_glob(SAMPLE_SOURCES
-        "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
-        "${_foosdk_glob_root}/foobar2000/foo_sample/*.cpp"
-)
 _foosdk_glob(SHARED_SOURCES
         "${_foosdk_glob_root}/foobar2000/shared/*.c"
         "${_foosdk_glob_root}/foobar2000/shared/*.cpp"
@@ -179,6 +175,14 @@ elseif (APPLE)
     target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
     target_link_libraries(foosdk_shared PRIVATE foosdk)
 endif ()
+target_include_directories(foosdk_shared PUBLIC
+        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
+)
+_foosdk_glob(SAMPLE_SOURCES
+        "${_foosdk_glob_root}/foobar2000/foo_sample/*.c"
+        "${_foosdk_glob_root}/foobar2000/foo_sample/*.cpp"
+)
 if (WIN32)
     _foosdk_glob(SAMPLE_SOURCES_WINDOWS
             "${_foosdk_glob_root}/foobar2000/foo_sample/*.rc"
@@ -186,25 +190,38 @@ if (WIN32)
     list(APPEND SAMPLE_SOURCES ${SAMPLE_SOURCES_WINDOWS})
 elseif (APPLE)
     _foosdk_glob(SAMPLE_SOURCES_MACOS
-            "${_foosdk_glob_root}/foobar2000/foo_sample/*.m"
-            "${_foosdk_glob_root}/foobar2000/foo_sample/*.mm"
-            "${_foosdk_glob_root}/foobar2000/foo_sample/*.xib")
+            "${_foosdk_glob_root}/foobar2000/foo_sample/**/*.m"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/**/*.mm"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/**/*.xib"
+    )
+    set(SAMPLE_SOURCES
+            "${_foosdk_glob_root}/foobar2000/foo_sample/IO.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/Mac/fooSampleDSPView.mm"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/Mac/fooSampleMacPreferences.mm"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/contextmenu.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/decode.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/dsp_sample.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/initquit.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/input_raw.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/main.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/mainmenu-dynamic.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/playback_stream_capture.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/preferences.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/rating.cpp"
+            "${_foosdk_glob_root}/foobar2000/foo_sample/ui_and_threads.cpp"
+            "${_foosdk_glob_root}/foobar2000/helpers-mac/NSView+embed.m"
+            "${_foosdk_glob_root}/foobar2000/helpers-mac/fooDecibelFormatter.m"
+    )
     list(APPEND SAMPLE_SOURCES ${SAMPLE_SOURCES_MACOS})
 endif ()
-target_include_directories(foosdk_shared PUBLIC
-        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
-)
 add_library(foo_sample MODULE ${SAMPLE_SOURCES})
-target_include_directories(foo_sample PUBLIC
-        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/foo_sample>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/foo_sample>"
+target_include_directories(foo_sample PRIVATE
+        "${_foosdk_glob_root}/foobar2000/foo_sample"
 )
 target_link_libraries(foo_sample PRIVATE foosdk foosdk_helpers foosdk_shared)
 if (APPLE)
     set_target_properties(foo_sample PROPERTIES BUNDLE ON BUNDLE_EXTENSION component)
     target_link_libraries(foo_sample PRIVATE "$<LINK_LIBRARY:FRAMEWORK,Cocoa>")
-    target_link_libraries(foo_sample PRIVATE foosdk_helpers_mac)
 elseif (WIN32)
     target_link_libraries(foo_sample PRIVATE foosdk_ppui)
 endif ()
