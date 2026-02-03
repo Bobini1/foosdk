@@ -138,6 +138,13 @@ if (APPLE)
             "${_foosdk_glob_root}/foobar2000/shared/*.m"
             "${_foosdk_glob_root}/foobar2000/shared/*.mm"
     )
+    # There is so few of them that it's easier to just list them explicitly
+    set(SHARED_SOURCES
+            "${_foosdk_glob_root}/foobar2000/shared/audio_math.cpp"
+            "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp"
+            "${_foosdk_glob_root}/foobar2000/shared/stdafx.cpp"
+            "${_foosdk_glob_root}/foobar2000/shared/utf8.cpp"
+    )
     list(APPEND SHARED_SOURCES ${SHARED_SOURCES_MACOS})
 elseif (WIN32)
     list(REMOVE_ITEM SHARED_SOURCES "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp")
