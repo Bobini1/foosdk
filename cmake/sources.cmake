@@ -47,7 +47,6 @@ if (APPLE)
             "${_foosdk_glob_root}/pfc/*.mm"
     )
     list(APPEND PFC_SOURCES ${PFC_SOURCES_MAC})
-    target_link_libraries(pfc PUBLIC "-framework Foundation")
 endif ()
 
 add_library(pfc STATIC ${PFC_SOURCES})
@@ -56,6 +55,9 @@ target_include_directories(pfc PUBLIC
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 target_compile_definitions(pfc PUBLIC ${FLAGS})
+if (APPLE)
+    target_link_libraries(pfc PUBLIC "-framework Foundation")
+endif ()
 
 _foosdk_glob(SDK_SOURCES
         "${_foosdk_glob_root}/foobar2000/SDK/*.c"
