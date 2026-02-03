@@ -123,7 +123,7 @@ if (APPLE)
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/helpers-mac>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac>"
     )
-    target_link_libraries(foosdk_helpers_mac PUBLIC foosdk_helpers)
+    target_link_libraries(foosdk_helpers_mac INTERFACE foosdk_helpers)
     target_sources(foosdk_helpers_mac INTERFACE ${SDK_HELPERS_MAC_SOURCES})
 endif ()
 
