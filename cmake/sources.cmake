@@ -159,6 +159,7 @@ if (WIN32)
     target_link_libraries(foosdk_shared PRIVATE DbgHelp Comctl32 UxTheme)
 elseif (APPLE)
     target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
+    target_link_libraries(foosdk_shared PRIVATE foosdk)
 endif ()
 if (WIN32)
     _foosdk_glob(SAMPLE_SOURCES_WINDOWS
