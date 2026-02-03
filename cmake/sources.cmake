@@ -168,12 +168,12 @@ elseif (WIN32)
 endif ()
 add_library(foosdk_shared SHARED ${SHARED_SOURCES})
 target_compile_definitions(foosdk_shared PRIVATE SHARED_EXPORTS)
+target_link_libraries(foosdk_shared PUBLIC foosdk)
 target_link_libraries(foosdk_shared PRIVATE pfc)
 if (WIN32)
     target_link_libraries(foosdk_shared PRIVATE DbgHelp Comctl32 UxTheme)
 elseif (APPLE)
     target_link_libraries(foosdk_shared PRIVATE "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
-    target_link_libraries(foosdk_shared PRIVATE foosdk)
 endif ()
 target_include_directories(foosdk_shared PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
