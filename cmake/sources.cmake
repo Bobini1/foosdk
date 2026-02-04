@@ -5,7 +5,7 @@ FetchContent_Declare(
         URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
 )
 FetchContent_MakeAvailable(foobar_sdk_source)
-find_package(wtl REQUIRED)
+find_package(WTL REQUIRED)
 
 set(FLAGS)
 if (WIN32)
@@ -105,7 +105,7 @@ target_include_directories(helpers PUBLIC
 )
 target_link_libraries(helpers PUBLIC pfc foosdk)
 if (WIN32)
-    target_link_libraries(helpers PUBLIC wtl)
+    target_link_libraries(helpers PUBLIC WTL::WTL)
 endif ()
 add_library(foosdk::helpers ALIAS helpers)
 
@@ -140,7 +140,7 @@ if (WIN32)
             "$<BUILD_INTERFACE:${_foosdk_glob_root}/libPPUI>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libPPUI>"
     )
-    target_link_libraries(ppui PUBLIC pfc wtl)
+    target_link_libraries(ppui PUBLIC pfc WTL::WTL)
     add_library(foosdk::ppui ALIAS ppui)
     target_compile_options(ppui PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
 endif ()
