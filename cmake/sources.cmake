@@ -1,10 +1,10 @@
 include(FetchContent)
 FetchContent_Declare(
-        foobar_sdk
+        foobar_sdk_source
         URL https://www.foobar2000.org/downloads/SDK-2024-12-03.7z
         URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
 )
-FetchContent_MakeAvailable(foobar_sdk)
+FetchContent_MakeAvailable(foobar_sdk_source)
 FetchContent_Declare(
         wtl
         URL https://sourceforge.net/projects/wtl/files/latest/download
@@ -28,7 +28,7 @@ if (WIN32)
             _WIN32_WINNT=${WINVER}
     )
 endif ()
-set(_foosdk_glob_root "${foobar_sdk_SOURCE_DIR}")
+set(_foosdk_glob_root "${foobar_sdk_source_SOURCE_DIR}")
 
 function(_foosdk_glob out_var)
     file(GLOB _globbed CONFIGURE_DEPENDS LIST_DIRECTORIES FALSE RELATIVE "${_foosdk_glob_root}" ${ARGN})

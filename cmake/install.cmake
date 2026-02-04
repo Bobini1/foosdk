@@ -24,15 +24,15 @@ install(
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/foosdk
 )
 install(DIRECTORY
-        "${foobar_sdk_SOURCE_DIR}/pfc"
-        "${foobar_sdk_SOURCE_DIR}/foobar2000"
-        "${foobar_sdk_SOURCE_DIR}/libPPUI"
+        "${foobar_sdk_source_SOURCE_DIR}/pfc"
+        "${foobar_sdk_source_SOURCE_DIR}/foobar2000"
+        "${foobar_sdk_source_SOURCE_DIR}/libPPUI"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
 
 install(DIRECTORY
-        "${foobar_sdk_SOURCE_DIR}/foobar2000/helpers-mac/"
+        "${foobar_sdk_source_SOURCE_DIR}/foobar2000/helpers-mac/"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac
 )
 
@@ -42,8 +42,8 @@ install(DIRECTORY "${wtl_SOURCE_DIR}/Include/"
 
 if (WIN32)
     install(FILES
-            "${foobar_sdk_SOURCE_DIR}/foobar2000/shared/shared-x64.lib"
-            "${foobar_sdk_SOURCE_DIR}/foobar2000/shared/shared-Win32.lib"
+            "${foobar_sdk_source_SOURCE_DIR}/foobar2000/shared/shared-x64.lib"
+            "${foobar_sdk_source_SOURCE_DIR}/foobar2000/shared/shared-Win32.lib"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 endif ()
