@@ -6,7 +6,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(foobar_sdk_source)
 find_package(wtl REQUIRED)
-add_library(foosdk::wtl ALIAS wtl)
 
 set(FLAGS)
 if (WIN32)
