@@ -55,6 +55,7 @@ target_include_directories(pfc PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+target_compile_features(pfc PUBLIC cxx_std_17)
 add_library(foosdk::pfc ALIAS pfc)
 target_compile_definitions(pfc PUBLIC ${FLAGS})
 if (APPLE)
