@@ -5,7 +5,9 @@ FetchContent_Declare(
         URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
 )
 FetchContent_MakeAvailable(foobar_sdk_source)
-find_package(WTL REQUIRED)
+if (WIN32)
+    find_package(WTL REQUIRED)
+endif ()
 
 set(FLAGS)
 if (WIN32)
