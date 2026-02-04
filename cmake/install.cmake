@@ -16,10 +16,6 @@ foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_h
 endforeach ()
 
 install(
-        TARGETS foo_sample LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-install(
         EXPORT foosdkTargets NAMESPACE foosdk::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/foosdk
 )
