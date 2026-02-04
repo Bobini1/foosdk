@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include_guard(GLOBAL)
+
+set_and_check(foosdk_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
+set(foosdk_ROOT "${PACKAGE_PREFIX_DIR}")
+
+include(CMakeFindDependencyMacro)
+find_dependency(WTL)
+
+if(NOT TARGET foosdk::pfc)
+    include("${CMAKE_CURRENT_LIST_DIR}/foosdkTargets.cmake")
+endif()
+
+check_required_components(foosdk)

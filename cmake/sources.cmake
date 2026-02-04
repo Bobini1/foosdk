@@ -20,6 +20,7 @@ if (WIN32)
 endif ()
 set(_foosdk_glob_root "${foobar_sdk_source_SOURCE_DIR}")
 
+include(GNUInstallDirs)
 function(_foosdk_glob out_var)
     file(GLOB _globbed CONFIGURE_DEPENDS LIST_DIRECTORIES FALSE RELATIVE "${_foosdk_glob_root}" ${ARGN})
     list(SORT _globbed)
@@ -56,13 +57,13 @@ _foosdk_glob(COMPONENT_CLIENT_SOURCES
         "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.c"
         "${_foosdk_glob_root}/foobar2000/foobar2000_component_client/*.cpp"
 )
-add_library(foosdk_component_client STATIC ${COMPONENT_CLIENT_SOURCES})
-target_include_directories(foosdk_component_client PUBLIC
+add_library(component_client STATIC ${COMPONENT_CLIENT_SOURCES})
+target_include_directories(component_client PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
 )
-target_link_libraries(foosdk_component_client PUBLIC pfc)
-add_library(foosdk::component_client ALIAS foosdk_component_client)
+target_link_libraries(component_client PUBLIC pfc)
+add_library(foosdk::component_client ALIAS component_client)
 
 _foosdk_glob(SDK_SOURCES
         "${_foosdk_glob_root}/foobar2000/SDK/*.c"
@@ -80,7 +81,7 @@ target_include_directories(foosdk PUBLIC
         "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
 )
-target_link_libraries(foosdk PUBLIC pfc foosdk_component_client)
+target_link_libraries(foosdk PUBLIC pfc component_client)
 add_library(foosdk::foosdk ALIAS foosdk)
 
 _foosdk_glob(SDK_HELPERS_SOURCES
@@ -165,29 +166,17 @@ if (APPLE)
 elseif (WIN32)
     list(REMOVE_ITEM SHARED_SOURCES "${_foosdk_glob_root}/foobar2000/shared/shared-nix.cpp")
 endif ()
+add_library(shared SHARED ${SHARED_SOURCES})
+target_compile_definitions(shared PRIVATE SHARED_EXPORTS)
+target_link_libraries(shared PUBLIC pfc foosdk)
+target_include_directories(shared PUBLIC
+        "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
+)
 if (APPLE)
-    add_library(shared SHARED ${SHARED_SOURCES})
-    target_compile_definitions(shared PRIVATE SHARED_EXPORTS)
-    target_link_libraries(shared PRIVATE pfc)
-    target_link_libraries(shared PUBLIC foosdk)
     target_link_libraries(shared PUBLIC "$<LINK_LIBRARY:FRAMEWORK,AppKit>")
-    target_include_directories(shared PUBLIC
-            "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
-            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
-    )
 elseif (WIN32)
-    add_library(shared INTERFACE)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(_shared_implib "${_foosdk_glob_root}/foobar2000/shared/shared-x64.lib")
-    else ()
-        set(_shared_implib "${_foosdk_glob_root}/foobar2000/shared/shared-Win32.lib")
-    endif ()
-    target_link_libraries(shared INTERFACE "${_shared_implib}")
-    target_include_directories(shared INTERFACE
-            "$<BUILD_INTERFACE:${_foosdk_glob_root}/foobar2000/shared>"
-            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/shared>"
-    )
-    unset(_shared_implib)
+    target_link_libraries(shared PUBLIC Dbghelp Comctl32 UxTheme)
 endif ()
 add_library(foosdk::shared ALIAS shared)
 

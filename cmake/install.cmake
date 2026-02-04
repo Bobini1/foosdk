@@ -11,7 +11,7 @@ function(_foosdk_install target)
     endif ()
 endfunction()
 
-foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared)
+foreach (tgt IN ITEMS pfc foosdk component_client helpers helpers_mac ppui shared)
     _foosdk_install(${tgt})
 endforeach ()
 
@@ -32,10 +32,19 @@ install(DIRECTORY
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac
 )
 
-if (WIN32)
-    install(FILES
-            "${foobar_sdk_source_SOURCE_DIR}/foobar2000/shared/shared-x64.lib"
-            "${foobar_sdk_source_SOURCE_DIR}/foobar2000/shared/shared-Win32.lib"
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    )
-endif ()
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/foosdkConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/foosdkConfig.cmake"
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/foosdk
+)
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/foosdkConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+)
+install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/foosdkConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/foosdkConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/foosdk
+)

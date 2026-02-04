@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(foosdk LANGUAGES CXX)
+project(foosdk LANGUAGES CXX VERSION 2024.12.03)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     enable_language(OBJCXX)
