@@ -48,7 +48,9 @@ target_include_directories(pfc PUBLIC
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 target_compile_features(pfc PUBLIC cxx_std_17)
-target_compile_options(pfc PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
+if (MSVC)
+    target_compile_options(pfc PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
+endif ()
 add_library(foosdk::pfc ALIAS pfc)
 target_compile_definitions(pfc PUBLIC ${FLAGS})
 if (APPLE)
