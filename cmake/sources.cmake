@@ -5,17 +5,7 @@ FetchContent_Declare(
         URL_HASH SHA256=d1f8bfa5250a1bc33eefd583991c1149f174adb8fbb3cf2ade62daebc328df14
 )
 FetchContent_MakeAvailable(foobar_sdk_source)
-FetchContent_Declare(
-        wtl
-        URL https://sourceforge.net/projects/wtl/files/latest/download
-        OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(wtl)
-add_library(wtl INTERFACE)
-target_include_directories(wtl INTERFACE
-        "$<BUILD_INTERFACE:${wtl_SOURCE_DIR}/Include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/wtl>"
-)
+find_package(wtl REQUIRED)
 add_library(foosdk::wtl ALIAS wtl)
 
 set(FLAGS)

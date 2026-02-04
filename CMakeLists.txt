@@ -7,5 +7,4 @@ elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     message(FATAL_ERROR "Target OS is not Windows or Mac")
 endif ()
 include(sources)
-
 include(install)

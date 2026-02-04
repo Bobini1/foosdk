@@ -11,7 +11,7 @@ function(_foosdk_install target)
     endif ()
 endfunction()
 
-foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared wtl)
+foreach (tgt IN ITEMS pfc foosdk foosdk_component_client foosdk_helpers foosdk_helpers_mac foosdk_ppui foosdk_shared)
     _foosdk_install(${tgt})
 endforeach ()
 
@@ -34,10 +34,6 @@ install(DIRECTORY
 install(DIRECTORY
         "${foobar_sdk_source_SOURCE_DIR}/foobar2000/helpers-mac/"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers-mac
-)
-
-install(DIRECTORY "${wtl_SOURCE_DIR}/Include/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wtl
 )
 
 if (WIN32)
