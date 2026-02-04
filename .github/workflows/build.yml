@@ -35,10 +35,22 @@ jobs:
       with:
         arch: ${{ matrix.arch }}
 
+    - name: Get WTL
+      uses: actions/checkout@v4
+      with:
+        repository: Bobini1/wtl
+
+    - name: Build and install WTL
+      run: |
+        mkdir wtl_build
+        cmake -A ${{ matrix.arch }} -S wtl -B wtl_build -DCMAKE_INSTALL_PREFIX=%CD%\wtl_install
+        msbuild -v:m -p:Configuration=Release -p:Platform=${{ matrix.arch }} wtl_build\INSTALL.vcxproj
+      shell: cmd
+
     - name: Build
       run: |
         mkdir build
-        cmake -A ${{ matrix.arch }} -S . -B build
+        cmake -A ${{ matrix.arch }} -S . -B build -DCMAKE_PREFIX_PATH=%CD%\wtl_install
         msbuild -v:m -p:Configuration=Release -p:Platform=${{ matrix.arch }} build\foosdk.sln
 
   build_macos:
