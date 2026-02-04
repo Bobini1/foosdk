@@ -7,8 +7,5 @@ elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     message(FATAL_ERROR "Target OS is not Windows or Mac")
 endif ()
 include(sources)
-if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /wd4302 /wd4838 /wd4996 /d2notypeopt")
-endif ()
 
 include(install)
