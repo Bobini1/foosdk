@@ -38,13 +38,13 @@ jobs:
     - name: Get WTL
       uses: actions/checkout@v4
       with:
-        repository: Bobini1/wtl
+        repository: alamaison/wtl
         path: wtl
 
     - name: Build and install WTL
       run: |
         mkdir wtl_build
-        cmake -A ${{ matrix.arch }} -S wtl -B wtl_build -DCMAKE_INSTALL_PREFIX=%CD%\wtl_install
+        cmake -A ${{ matrix.arch }} -S wtl -B wtl_build -DCMAKE_INSTALL_PREFIX=%CD%\wtl_install -DBUILD_SAMPLES=OFF
         cmake --build wtl_build --config Release
         cmake --install wtl_build --config Release
 
