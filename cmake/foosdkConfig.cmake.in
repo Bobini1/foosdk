@@ -6,9 +6,6 @@ set_and_check(foosdk_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDI
 set(foosdk_ROOT "${PACKAGE_PREFIX_DIR}")
 
 include(CMakeFindDependencyMacro)
-if (@WIN32@)
-    find_dependency(WTL)
-endif()
 
 if(NOT TARGET foosdk::pfc)
     include("${CMAKE_CURRENT_LIST_DIR}/foosdkTargets.cmake")
