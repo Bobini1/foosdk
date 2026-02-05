@@ -1,5 +1,5 @@
 if (WIN32)
-    find_package(WTL REQUIRED)
+    find_package(wtl REQUIRED)
 endif ()
 
 set(FLAGS)
@@ -316,7 +316,7 @@ target_include_directories(helpers PUBLIC
 )
 target_link_libraries(helpers PUBLIC pfc foosdk)
 if (WIN32)
-    target_link_libraries(helpers PUBLIC WTL::WTL)
+    target_link_libraries(helpers PUBLIC wtl::wtl)
 endif ()
 add_library(foosdk::helpers ALIAS helpers)
 
@@ -376,7 +376,7 @@ if (WIN32)
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/libPPUI>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libPPUI>"
     )
-    target_link_libraries(ppui PUBLIC pfc WTL::WTL)
+    target_link_libraries(ppui PUBLIC pfc wtl::wtl)
     add_library(foosdk::ppui ALIAS ppui)
     target_compile_options(ppui PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
 endif ()
