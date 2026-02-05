@@ -95,7 +95,7 @@ if (MSVC)
     target_compile_options(pfc PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
 endif ()
 add_library(foosdk::pfc ALIAS pfc)
-target_compile_definitions(pfc PUBLIC ${FLAGS})
+target_compile_definitions(pfc PRIVATE ${FLAGS})
 if (APPLE)
     target_link_libraries(pfc PUBLIC "$<LINK_LIBRARY:FRAMEWORK,Foundation>")
 endif ()
@@ -110,6 +110,7 @@ target_include_directories(component_client PUBLIC
 )
 target_link_libraries(component_client PUBLIC pfc)
 add_library(foosdk::component_client ALIAS component_client)
+target_compile_definitions(component_client PRIVATE ${FLAGS})
 
 set(SDK_SOURCES
         sdk/foobar2000/SDK/abort_callback.cpp
@@ -254,6 +255,7 @@ target_include_directories(foosdk PUBLIC
 )
 target_link_libraries(foosdk PUBLIC pfc component_client)
 add_library(foosdk::foosdk ALIAS foosdk)
+target_compile_definitions(foosdk PRIVATE ${FLAGS})
 
 set(SDK_HELPERS_SOURCES
         sdk/foobar2000/helpers/AutoComplete.cpp
@@ -319,6 +321,7 @@ if (WIN32)
     target_include_directories(helpers PUBLIC ${WTL_INCLUDE_DIRS})
 endif ()
 add_library(foosdk::helpers ALIAS helpers)
+target_compile_definitions(helpers PRIVATE ${FLAGS})
 
 if (APPLE)
     list(SORT SDK_HELPERS_MAC_SOURCES)
@@ -335,6 +338,7 @@ if (APPLE)
             "$<INSTALL_INTERFACE:${SDK_HELPERS_MAC_SOURCES_UNPREFIXED}>"
     )
     add_library(foosdk::helpers_mac ALIAS helpers_mac)
+    target_compile_definitions(helpers_mac INTERFACE ${FLAGS})
 endif ()
 
 if (WIN32)
@@ -380,6 +384,7 @@ if (WIN32)
     target_include_directories(ppui PUBLIC ${WTL_INCLUDE_DIRS})
     add_library(foosdk::ppui ALIAS ppui)
     target_compile_options(ppui PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:/d2notypeopt>")
+    target_compile_definitions(ppui PRIVATE ${FLAGS})
 endif ()
 
 set(SHARED_SOURCES
@@ -419,6 +424,7 @@ elseif (WIN32)
     target_link_libraries(shared PUBLIC Dbghelp Comctl32 UxTheme)
 endif ()
 add_library(foosdk::shared ALIAS shared)
+target_compile_definitions(shared PRIVATE ${FLAGS})
 
 if (WIN32)
     set(SAMPLE_SOURCES
@@ -468,6 +474,7 @@ add_library(foo_sample MODULE ${SAMPLE_SOURCES})
 target_include_directories(foo_sample PRIVATE
         sdk/foobar2000/foo_sample
 )
+target_compile_definitions(foo_sample PRIVATE ${FLAGS})
 target_link_libraries(foo_sample PRIVATE foosdk helpers shared)
 if (APPLE)
     set_target_properties(foo_sample PROPERTIES BUNDLE ON BUNDLE_EXTENSION component)
