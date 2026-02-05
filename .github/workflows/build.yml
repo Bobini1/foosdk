@@ -39,13 +39,14 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: Bobini1/wtl
+        path: wtl
 
     - name: Build and install WTL
       run: |
         mkdir wtl_build
         cmake -A ${{ matrix.arch }} -S wtl -B wtl_build -DCMAKE_INSTALL_PREFIX=%CD%\wtl_install
-        msbuild -v:m -p:Configuration=Release -p:Platform=${{ matrix.arch }} wtl_build\INSTALL.vcxproj
-      shell: cmd
+        cmake --build wtl_build --config Release
+        cmake --install wtl_build --config Release
 
     - name: Build
       run: |
