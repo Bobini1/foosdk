@@ -85,7 +85,7 @@ if (APPLE)
     )
 endif ()
 
-add_library(pfc STATIC ${PFC_SOURCES})
+add_library(pfc ${PFC_SOURCES})
 target_include_directories(pfc PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
@@ -103,7 +103,7 @@ endif ()
 set(COMPONENT_CLIENT_SOURCES
         sdk/foobar2000/foobar2000_component_client/component_client.cpp
 )
-add_library(component_client STATIC ${COMPONENT_CLIENT_SOURCES})
+add_library(component_client ${COMPONENT_CLIENT_SOURCES})
 target_include_directories(component_client PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/foobar2000>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
@@ -247,7 +247,7 @@ if (APPLE)
             sdk/foobar2000/SDK/utility.cpp
     )
 endif ()
-add_library(foosdk STATIC ${SDK_SOURCES})
+add_library(foosdk ${SDK_SOURCES})
 target_include_directories(foosdk PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/foobar2000>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000>"
@@ -309,7 +309,7 @@ if (APPLE)
             "sdk/foobar2000/helpers/DarkMode.cpp"
     )
 endif ()
-add_library(helpers STATIC ${SDK_HELPERS_SOURCES})
+add_library(helpers ${SDK_HELPERS_SOURCES})
 target_include_directories(helpers PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/foobar2000/helpers>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/foobar2000/helpers>"
@@ -371,7 +371,7 @@ if (WIN32)
             sdk/libPPUI/win32_utility.cpp
             sdk/libPPUI/wtl-pp.cpp
     )
-    add_library(ppui STATIC ${PPUI_SOURCES})
+    add_library(ppui ${PPUI_SOURCES})
     target_include_directories(ppui PUBLIC
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/libPPUI>"
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libPPUI>"
